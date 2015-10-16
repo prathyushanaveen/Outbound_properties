@@ -1,0 +1,6 @@
+Try removing the message properties and run the example.
+Look for content-type. It won't be available in outbound http request's inbound properties.
+
+Filter:
+
+Message property filter is being used to filter any message without content-type property set.

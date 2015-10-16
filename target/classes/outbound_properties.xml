@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" version="EE-3.6.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="8082" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration" host="localhost" port="8083" doc:name="HTTP Request Configuration"/>
+    <http:listener-config name="HTTP_Listener_Configuration1" host="localhost" port="8083" doc:name="HTTP Listener Configuration"/>
+
+    <message-property-filter pattern="Content-Type=application/json" caseSensitive="false" scope="inbound" name="Message_Property" doc:name="Message Property"/>
+    <flow name="outbound_propertiesFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/inbound/*" doc:name="HTTP"/>
+        <filter ref="Message_Property" doc:name="Filter Reference"/>
+        <message-properties-transformer doc:name="Message Properties">
+            <add-message-property key="Content-Type" value="text/plain"/>
+        </message-properties-transformer>
+        <logger message="Inside First Flow #[message]" level="INFO" doc:name="Logger"/>
+        <http:request config-ref="HTTP_Request_Configuration" path="/outbound" method="POST" doc:name="HTTP"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+    </flow>
+    <flow name="outbound_propertiesFlow1">
+        <http:listener config-ref="HTTP_Listener_Configuration1" path="/outbound/*" doc:name="HTTP"/>
+        <logger message="Inside Outbound flow #[message]" level="INFO" doc:name="Logger"/>
+        <object-to-string-transformer doc:name="Object to String"/>
+    </flow>
+</mule>
