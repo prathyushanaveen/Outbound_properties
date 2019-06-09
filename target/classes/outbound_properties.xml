@@ -14,16 +14,16 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
     <message-property-filter pattern="Content-Type=application/json" caseSensitive="false" scope="inbound" name="Message_Property" doc:name="Message Property"/>
     <flow name="first-flow">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/inbound/*" doc:name="HTTP"/>
-        <filter ref="Message_Property" doc:name="Filter Reference"/>
         <message-properties-transformer doc:name="Message Properties">
             <add-message-property key="Content-Type" value="text/plain"/>
         </message-properties-transformer>
         <logger message="Inside First Flow #[message]" level="INFO" doc:name="Logger"/>
         <http:request config-ref="HTTP_Request_Configuration" path="/secondflow" method="POST" doc:name="HTTP"/>
+        <logger message="hello #[message]" level="INFO" doc:name="Logger"/>
     </flow>
     <flow name="second-flow">
         <http:listener config-ref="HTTP_Listener_Configuration1" path="/secondflow/*" doc:name="HTTP"/>
-        <logger message="Inside seocnd flow #[message]" level="INFO" doc:name="Logger"/>
+        <logger message="Inside seocnd flow #[message.inboundProperties]" level="INFO" doc:name="Logger"/>
         <object-to-string-transformer doc:name="Object to String"/>
     </flow>
 </mule>
